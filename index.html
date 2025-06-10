@@ -362,12 +362,12 @@
             const url = musicUrlInput.value.trim();
             
             if (!url) {
-                showError('Inserisci un URL di streaming musicale valido');
+                showError('Inserisci un URL di Qobuz valido');
                 return;
             }
 
-            if (!url.includes('.com')) {
-                showError('L\'URL deve essere valido e contenere un dominio');
+            if (!url.includes('qobuz.com')) {
+                showError('L\'URL deve essere di Qobuz (qobuz.com)');
                 return;
             }
 
@@ -378,7 +378,7 @@
             }
 
             // Genera il comando
-            generatedCommand = `music-dl dl https://play.streaming.com/album/${albumId} -q 7 --embed-art --no-db`;
+            generatedCommand = `qobuz-dl dl https://play.qobuz.com/album/${albumId} -q 7 --embed-art --no-db`;
             
             resultText.textContent = generatedCommand;
             resultSection.classList.add('show');
