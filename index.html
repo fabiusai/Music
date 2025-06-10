@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music URL Converter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #2d3748;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            color: #718096;
+            font-size: 1.1rem;
+            text-align: center;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .input-section {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            color: #2d3748;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #4a5568;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 56px;
+        }
+
+        .button:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .button:disabled {
+            background: #a0aec0;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .process-btn {
+            width: 100%;
+            margin-bottom: 24px;
+        }
+
+        .result-section {
+            background: #f0fff4;
+            border: 2px solid #9ae6b4;
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 24px;
+            display: none;
+        }
+
+        .result-section.show {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-text {
+            background: #1a202c;
+            color: #68d391;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 1rem;
+            line-height: 1.5;
+            word-break: break-all;
+            margin-bottom: 16px;
+            border: 1px solid #2d3748;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .copy-btn {
+            background: #38a169;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .copy-btn:hover {
+            background: #2f855a;
+        }
+
+        .terminal-btn {
+            background: #2d3748;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .terminal-btn:hover {
+            background: #1a202c;
+        }
+
+        .example {
+            background: #edf2f7;
+            border-left: 4px solid #667eea;
+            padding: 16px;
+            margin-top: 16px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .example-title {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .example-url {
+            font-family: monospace;
+            background: white;
+            padding: 8px;
+            border-radius: 4px;
+            color: #667eea;
+            word-break: break-all;
+        }
+
+        .error {
+            background: #fed7d7;
+            border: 2px solid #fc8181;
+            color: #c53030;
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 16px;
+            display: none;
+        }
+
+        .error.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        .icon {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 24px;
+                margin: 10px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .copy-btn, .terminal-btn {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 Music Converter</h1>
+        <p class="subtitle">Converte URL di streaming musicale in comandi per il download</p>
+
+        <div class="input-section">
+            <div class="section-title">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M13.5 2c-5.621 0-10.211 4.443-10.475 10H3c-.552 0-1 .449-1 1 0 .551.448 1 1 1h.025C3.289 19.557 7.879 24 13.5 24 19.299 24 24 19.299 24 13.5S19.299 2 13.5 2zm0 20c-4.691 0-8.5-3.809-8.5-8.5S8.809 4 13.5 4 22 7.809 22 13.5 18.191 22 13.5 22z"/>
+                    <path d="M17.5 13.5c0 2.206-1.794 4-4 4s-4-1.794-4-4 1.794-4 4-4 4 1.794 4 4z"/>
+                </svg>
+                Inserisci URL Streaming
+            </div>
+            
+            <div class="input-group">
+                <label for="musicUrl">URL dell'album o traccia musicale:</label>
+                <input 
+                    type="text" 
+                    id="musicUrl" 
+                    placeholder="Inserisci qui l'URL dell'album o traccia"
+                >
+            </div>
+
+            <button class="button process-btn" id="processBtn">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+                <span>Elabora</span>
+            </button>
+
+
+        </div>
+
+        <div class="error" id="errorMessage"></div>
+
+        <div class="result-section" id="resultSection">
+            <div class="section-title">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+                </svg>
+                Comando Generato
+            </div>
+            
+            <div class="result-text" id="resultText"></div>
+            
+            <div class="button-group">
+                <button class="button copy-btn" id="copyBtn">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                    </svg>
+                    <span>Copia negli Appunti</span>
+                </button>
+                
+                <button class="button terminal-btn" id="selectBtn">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M3 5h2V3c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2v2h2c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V7c0-1.1.9-2 2-2zm4-2v2h10V3H7zm-2 6v8h14V9H5z"/>
+                    </svg>
+                    <span>Seleziona Tutto</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const musicUrlInput = document.getElementById('musicUrl');
+        const processBtn = document.getElementById('processBtn');
+        const resultSection = document.getElementById('resultSection');
+        const resultText = document.getElementById('resultText');
+        const copyBtn = document.getElementById('copyBtn');
+        const selectBtn = document.getElementById('selectBtn');
+        const errorMessage = document.getElementById('errorMessage');
+
+        let generatedCommand = '';
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.add('show');
+            resultSection.classList.remove('show');
+        }
+
+        function hideError() {
+            errorMessage.classList.remove('show');
+        }
+
+        function extractAlbumId(url) {
+            // Estrae l'ID dall'URL di streaming
+            const match = url.match(/\/([^\/]+)$/);
+            return match ? match[1] : null;
+        }
+
+        function updateButtonText(button, text, duration = 2000) {
+            const originalText = button.querySelector('span').textContent;
+            button.querySelector('span').textContent = text;
+            button.disabled = true;
+            
+            setTimeout(() => {
+                button.querySelector('span').textContent = originalText;
+                button.disabled = false;
+            }, duration);
+        }
+
+        processBtn.addEventListener('click', () => {
+            hideError();
+            const url = musicUrlInput.value.trim();
+            
+            if (!url) {
+                showError('Inserisci un URL di streaming musicale valido');
+                return;
+            }
+
+            if (!url.includes('.com')) {
+                showError('L\'URL deve essere valido e contenere un dominio');
+                return;
+            }
+
+            const albumId = extractAlbumId(url);
+            if (!albumId) {
+                showError('Impossibile estrarre l\'ID dall\'URL. Assicurati che l\'URL sia nel formato corretto.');
+                return;
+            }
+
+            // Genera il comando
+            generatedCommand = `music-dl dl https://play.streaming.com/album/${albumId} -q 7 --embed-art --no-db`;
+            
+            resultText.textContent = generatedCommand;
+            resultSection.classList.add('show');
+            
+            updateButtonText(processBtn, 'Elaborato!', 1500);
+        });
+
+        copyBtn.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(generatedCommand);
+                updateButtonText(copyBtn, 'Copiato!', 1500);
+            } catch (err) {
+                // Fallback per browser più vecchi
+                const textArea = document.createElement('textarea');
+                textArea.value = generatedCommand;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                updateButtonText(copyBtn, 'Copiato!', 1500);
+            }
+        });
+
+        selectBtn.addEventListener('click', () => {
+            // Seleziona tutto il testo nel risultato
+            const range = document.createRange();
+            range.selectNodeContents(resultText);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            
+            // Copia automaticamente dopo la selezione
+            try {
+                navigator.clipboard.writeText(generatedCommand);
+                updateButtonText(selectBtn, 'Selezionato e Copiato!', 2000);
+            } catch (err) {
+                // Fallback per browser più vecchi
+                document.execCommand('copy');
+                updateButtonText(selectBtn, 'Selezionato e Copiato!', 2000);
+            }
+        });
+
+        // Permette di premere Enter per elaborare
+        musicUrlInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                processBtn.click();
+            }
+        });
+
+        // Nascondi l'errore quando l'utente inizia a digitare
+        musicUrlInput.addEventListener('input', () => {
+            hideError();
+        });
+    </script>
+</body>
+</html>
